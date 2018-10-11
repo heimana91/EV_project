@@ -1,0 +1,89 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_offpeak_charging" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="DESKTOP-TGOEKBD" Version="0.1" Author="palme" Date="2018-00-09" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="OffPeak" Comment="">
+  </Event>
+  <Event Name="OnPeak" Comment="">
+  </Event>
+  <Event Name="Tick_classifier" Comment="">
+    <With Var="Price" />
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="OffpeakCharging" Comment="">
+  </Event>
+  <Event Name="OffpeakDischarging" Comment="">
+  </Event>
+  <Event Name="Peak" Comment="">
+  </Event>
+  <Event Name="Tick_WEP" Comment="">
+  </Event>
+  <Event Name="Grey_area" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Price" Type="REAL" Comment="" />
+</InputVars>
+
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="Init" Comment="" x="437.5" y="306.25">
+  </ECState>
+  <ECState Name="Cheap_WEP" Comment="" x="1881.25" y="306.25">
+    <ECAction Algorithm="Algorithm3" Output="OffpeakCharging" />
+    <ECAction Output="Tick_WEP" />
+  </ECState>
+  <ECState Name="High_WEP" Comment="" x="2143.75" y="1400">
+    <ECAction Algorithm="Algorithm1" Output="OffpeakDischarging" />
+    <ECAction Output="Tick_WEP" />
+  </ECState>
+  <ECState Name="Peak" Comment="" x="1137.5" y="1225">
+    <ECAction Algorithm="Algorithm4" Output="Tick_WEP" />
+    <ECAction Output="Peak" />
+  </ECState>
+  <ECState Name="Grey_Area" Comment="" x="3631.25" y="875">
+    <ECAction Algorithm="Algorithm5" Output="Grey_area" />
+    <ECAction Output="Tick_WEP" />
+  </ECState>
+  <ECTransition Source="Init" Destination="Peak" Condition="OnPeak AND Tick_classifier" x="393.75" y="875" />
+  <ECTransition Source="Init" Destination="Grey_Area" Condition="Tick_classifier AND (Price &gt; 75 AND Price &lt; 100)" x="2318.75" y="787.5" />
+  <ECTransition Source="Init" Destination="Cheap_WEP" Condition="OffPeak AND Tick_classifier AND (Price &lt; 75)" x="831.25" y="175" />
+  <ECTransition Source="Init" Destination="High_WEP" Condition="OffPeak AND Tick_classifier AND (Price &gt; 100)" x="525" y="743.75" />
+  <ECTransition Source="Cheap_WEP" Destination="Peak" Condition="OnPeak AND Tick_classifier" x="1181.25" y="481.25" />
+  <ECTransition Source="Cheap_WEP" Destination="Grey_Area" Condition="Tick_classifier AND (Price &gt; 75 AND Price &lt; 100)" x="2712.5" y="525" />
+  <ECTransition Source="Cheap_WEP" Destination="High_WEP" Condition="OffPeak AND Tick_classifier AND (Price &gt;100)" x="1925" y="1006.25" />
+  <ECTransition Source="Cheap_WEP" Destination="Cheap_WEP" Condition="OffPeak AND Tick_classifier AND (Price &lt; 75)" x="1750" y="175" />
+  <ECTransition Source="High_WEP" Destination="Peak" Condition="OnPeak AND Tick_classifier" x="1400" y="1356.25" />
+  <ECTransition Source="High_WEP" Destination="Grey_Area" Condition="Tick_classifier AND (Price &gt;75 AND Price&lt;100)" x="3193.75" y="1443.75" />
+  <ECTransition Source="High_WEP" Destination="Cheap_WEP" Condition="OffPeak AND Tick_classifier AND (Price &lt; 75)" x="1531.25" y="831.25" />
+  <ECTransition Source="High_WEP" Destination="High_WEP" Condition="OffPeak AND Tick_classifier AND (Price &gt; 100)" x="2056.25" y="1618.75" />
+  <ECTransition Source="Peak" Destination="Peak" Condition="OnPeak AND Tick_classifier" x="525" y="1225" />
+  <ECTransition Source="Peak" Destination="Grey_Area" Condition="Tick_classifier AND (Price &gt; 75 AND Price &lt; 100)" x="2493.75" y="1137.5" />
+  <ECTransition Source="Peak" Destination="Cheap_WEP" Condition="OffPeak AND Tick_classifier AND (Price &lt; 75)" x="1181.25" y="612.5" />
+  <ECTransition Source="Peak" Destination="High_WEP" Condition="OffPeak AND Tick_classifier AND (Price&gt;100)" x="1274.93441328406" y="1268.75" />
+  <ECTransition Source="Grey_Area" Destination="Peak" Condition="OnPeak AND Tick_classifier" x="2712.5" y="918.75" />
+  <ECTransition Source="Grey_Area" Destination="High_WEP" Condition="OffPeak AND Tick_classifier AND (Price &gt; 100)" x="2756.25" y="1268.75" />
+  <ECTransition Source="Grey_Area" Destination="Cheap_WEP" Condition="OffPeak AND Tick_classifier AND (Price &lt; 75)" x="2537.5" y="612.5" />
+  <ECTransition Source="Grey_Area" Destination="Grey_Area" Condition="Tick_classifier AND (Price &gt; 75 AND Price &lt; 100)" x="3718.75" y="1181.25" />
+</ECC><Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot;  High WEP   \r\n&quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm2" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot; No Charging..... \r\n &quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm3" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot;cheap WEP \r\n&quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm4" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot;peak..... \r\n&quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm5" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot;Grey Area&quot;);" />
+</Algorithm></BasicFB>
+</FBType>

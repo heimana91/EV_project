@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_text_print" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="DESKTOP-TGOEKBD" Version="0.1" Author="palme" Date="2018-00-15" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick_array" Comment="">
+    <With Var="Min" />
+    <With Var="Demand" />
+    <With Var="Pgrid" />
+    <With Var="Pbc" />
+    <With Var="Pbd" />
+    <With Var="Price" />
+    <With Var="lenght" />
+    <With Var="Day" />
+  </Event>
+  <Event Name="tick_stop" Comment="">
+    <With Var="Stop" />
+    <With Var="SMA" />
+    <With Var="Std_dev" />
+  </Event>
+  <Event Name="Tick_SoC" Comment="">
+    <With Var="SoC" />
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="Done" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Min" Type="DINT" Comment="" />
+  <VarDeclaration Name="Demand" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pgrid" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pbc" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pbd" Type="REAL" Comment="" />
+  <VarDeclaration Name="Price" Type="REAL" Comment="" />
+  <VarDeclaration Name="Stop" Type="BOOL" Comment="" />
+  <VarDeclaration Name="lenght" Type="INT" Comment="" />
+  <VarDeclaration Name="SoC" Type="REAL" Comment="" />
+  <VarDeclaration Name="Day" Type="REAL" Comment="" />
+  <VarDeclaration Name="SMA" Type="REAL" Comment="" />
+  <VarDeclaration Name="Std_dev" Type="REAL" Comment="" />
+</InputVars>
+
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="Start" Comment="" x="350" y="306.25">
+  </ECState>
+  <ECState Name="State1" Comment="" x="1093.75" y="313.541659712791">
+    <ECAction Algorithm="Algorithm1" Output="Done" />
+  </ECState>
+  <ECTransition Source="Start" Destination="State1" Condition="Tick_array" x="642.300420254469" y="175" />
+  <ECTransition Source="State1" Destination="Start" Condition="true" x="644.125" y="350" />
+</ECC><Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="bool stop = me-&gt;Stop;&#xD;&#xA;//static int l = 1440;&#xD;&#xA;static DINT min[1442][7];&#xD;&#xA;static REAL Power_Demand[1442][7];&#xD;&#xA;static REAL Power_grid[1442][7];&#xD;&#xA;static REAL Pb_charge[1442][7];&#xD;&#xA;static REAL Pb_discharge[1442][7];&#xD;&#xA;static REAL the_price[1442][7];&#xD;&#xA;static REAL SoCess[1442][7];&#xD;&#xA;&#xD;&#xA;static REAL Sma[1442][7];&#xD;&#xA;static REAL Std_dev_arr[1442][7];&#xD;&#xA;&#xD;&#xA;int day = me-&gt;Day;&#xD;&#xA;int i = me-&gt;Min;&#xD;&#xA;&#xD;&#xA; min[i][day] = me-&gt;Min ;&#xD;&#xA; Power_Demand[i][day] = me-&gt;Demand;&#xD;&#xA;&#xD;&#xA; Power_grid[i][day] = me-&gt;Pgrid;&#xD;&#xA;&#xD;&#xA; Pb_charge[i][day] = me-&gt;Pbc;&#xD;&#xA;&#xD;&#xA; Pb_discharge[i][day] = me-&gt;Pbd;&#xD;&#xA;&#xD;&#xA; the_price[i][day] = me-&gt;Price;&#xD;&#xA;&#xD;&#xA;SoCess[i][day] = me-&gt;SoC;&#xD;&#xA;&#xD;&#xA;Sma[i][day] = me-&gt;SMA;&#xD;&#xA;Std_dev_arr[i][day] = me-&gt;Std_dev;&#xD;&#xA;&#xD;&#xA; printf(&quot; day print fbf = %d &amp;&amp; min is %d \n&quot;,day, min[i][day]);&#xD;&#xA;&#xD;&#xA; //printf(&quot;Txt print min, %d, %d \r\n&quot;, min[i], me-&gt;Min);&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;if (stop){ //&amp;&amp; day == 6 &amp;&amp; i == 1439&#xD;&#xA;printf(&quot;Starting Excel File writing&quot;);&#xD;&#xA;//printf(&quot;this is min 1 %d \n&quot;, min[0][0]);&#xD;&#xA;FILE *f = fopen(&quot;Results.csv&quot;, &quot;w&quot;);&#xD;&#xA;&#xD;&#xA;if (f == NULL)&#xD;&#xA;{&#xD;&#xA;    printf(&quot;Error opening file!\n&quot;);&#xD;&#xA;    exit(1);&#xD;&#xA;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;/* print some text */&#xD;&#xA;const char *text = &quot; Minute,Demand,  Pgrid, Pbc, Pbd, Price_30_min, SoC,Sma,std, ,Minute,Demand,  Pgrid, Pbc, Pbd, Price_30_min, SoC,  ,Minute,Demand,  Pgrid, Pbc, Pbd, Price_30_min, SoC,  ,Minute,Demand,  Pgrid, Pbc, Pbd, Price_30_min, SoC,  ,Minute,Demand ,Pgrid, Pbc, Pbd, Price_30_min, SoC,  ,Minute,Demand ,Pgrid, Pbc, Pbd, Price_30_min, SoC,  ,Minute,Demand  ,Pgrid, Pbc, Pbd, Price_30_min, SoC&quot;;&#xD;&#xA;fprintf(f, &quot; %s \r\n&quot;, text);&#xD;&#xA;&#xD;&#xA;for (DINT x=0; x &lt; 1442; x++){&#xD;&#xA;fprintf(f, &quot; %d, %f, %f, %f, %f, %f, %f,%f,%f,  ,%d, %f, %f, %f, %f, %f, %f,  ,%d, %f, %f, %f, %f, %f, %f,  ,%d, %f, %f, %f, %f, %f, %f,  ,%d, %f, %f, %f, %f, %f, %f,  ,%d, %f, %f, %f, %f, %f, %f,  ,%d, %f, %f, %f, %f, %f, %f \n&quot;, min[x][0], Power_Demand[x][0], Power_grid[x][0], Pb_charge[x][0], Pb_discharge[x][0], the_price[x][0], SoCess[x][0],Sma[x][0],Std_dev_arr[x][0], min[x][1], Power_Demand[x][1], Power_grid[x][1], Pb_charge[x][1], Pb_discharge[x][1], the_price[x][1], SoCess[x][1], min[x][2], Power_Demand[x][2], Power_grid[x][2], Pb_charge[x][2], Pb_discharge[x][2], the_price[x][2], SoCess[x][2], min[x][3], Power_Demand[x][3], Power_grid[x][3], Pb_charge[x][3], Pb_discharge[x][3], the_price[x][3], SoCess[x][3], min[x][4], Power_Demand[x][4], Power_grid[x][4], Pb_charge[x][4], Pb_discharge[x][4], the_price[x][4], SoCess[x][4], min[x][5], Power_Demand[x][5], Power_grid[x][5], Pb_charge[x][5], Pb_discharge[x][5], the_price[x][5], SoCess[x][5], min[x][6], Power_Demand[x][6], Power_grid[x][6], Pb_charge[x][6], Pb_discharge[x][6], the_price[x][6], SoCess[x][6] );&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;fclose(f);&#xD;&#xA;&#xD;&#xA;FILE *f2 =fopen(&quot;SMA.csv&quot;, &quot;w&quot;);&#xD;&#xA;&#xD;&#xA;if (f2 == NULL)&#xD;&#xA;{&#xD;&#xA;printf(&quot;Error opening file 2!\n&quot;);&#xD;&#xA;    exit(1);&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;const char *text2 = &quot; SMA, Std_dev, ,SMA, Std_dev, ,SMA, Std_dev, ,SMA, Std_dev, ,SMA, Std_dev, ,SMA, Std_dev, ,SMA, Std_dev&quot;;&#xD;&#xA;for (DINT x=0; x &lt; 1442; x++){&#xD;&#xA;if (x%30 == 0){&#xD;&#xA;fprintf(f, &quot; %f, %f, ,%f, %f, ,%f, %f, ,%f, %f, ,%f, %f, ,%f, %f, ,%f, %f \n&quot;,Sma[x][0],Std_dev_arr[x][0],Sma[x][1],Std_dev_arr[x][1],Sma[x][2],Std_dev_arr[x][2],Sma[x][3],Std_dev_arr[x][3],Sma[x][4],Std_dev_arr[x][4],Sma[x][5],Std_dev_arr[x][5],Sma[x][6],Std_dev_arr[x][6]);&#xD;&#xA;}&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;fclose(f);&#xD;&#xA;exit(1);&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;" />
+</Algorithm></BasicFB>
+</FBType>

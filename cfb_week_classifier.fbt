@@ -1,0 +1,87 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="cfb_week_classifier" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="DESKTOP-TGOEKBD" Version="0.1" Author="palme" Date="2018-00-27" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick" Comment="">
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="EnterOffPeak" Comment="">
+  </Event>
+  <Event Name="EnterOnPeak" Comment="">
+  </Event>
+  <Event Name="Tick_time" Comment="">
+  </Event>
+  <Event Name="OffPeakCharge" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Minute" Type="DINT" Comment="" />
+  <VarDeclaration Name="Day" Type="REAL" Comment="" />
+</InputVars>
+
+</InterfaceList>
+<FBNetwork>
+  <FB Name="Reference" Type="bfb_monday_classifier" x="481.25" y="175" />
+  <FB Name="Reference1" Type="bfb_tuesday_classifier" x="1400" y="175" />
+  <FB Name="Reference2" Type="bfb_wednesday_classifier" x="2275" y="175" />
+  <FB Name="Reference3" Type="bfb_thurs_classifier" x="3062.5" y="175" />
+  <FB Name="Reference4" Type="bfb_sun_classifier" x="2712.5" y="1050" />
+  <FB Name="Reference5" Type="bfb_sat_classifier" x="1793.75" y="1050" />
+  <FB Name="Reference6" Type="bfb_fri_classifier" x="875" y="1006.25" />
+  <EventConnections><Connection Source="Tick" Destination="Reference.Tick" />
+<Connection Source="Tick" Destination="Reference1.Tick" />
+<Connection Source="Tick" Destination="Reference2.Tick" />
+<Connection Source="Tick" Destination="Reference3.Tick" />
+<Connection Source="Tick" Destination="Reference6.Tick" />
+<Connection Source="Tick" Destination="Reference5.Tick" />
+<Connection Source="Tick" Destination="Reference4.Tick" />
+<Connection Source="Reference.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference1.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference2.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference3.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference6.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference5.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference4.EnterOffPeak" Destination="EnterOffPeak" />
+<Connection Source="Reference.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference1.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference2.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference3.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference6.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference5.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference4.EnterOnPeak" Destination="EnterOnPeak" />
+<Connection Source="Reference.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference1.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference2.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference3.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference6.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference5.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference4.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference1.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference2.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference3.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference6.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference5.OffPeakCharging" Destination="OffPeakCharge" />
+<Connection Source="Reference4.OffPeakCharging" Destination="OffPeakCharge" /></EventConnections>
+  <DataConnections><Connection Source="Minute" Destination="Reference4.Minute" />
+<Connection Source="Minute" Destination="Reference5.Minute" />
+<Connection Source="Minute" Destination="Reference6.Minute" />
+<Connection Source="Minute" Destination="Reference.Minute" />
+<Connection Source="Minute" Destination="Reference1.Minute" />
+<Connection Source="Minute" Destination="Reference2.Minute" />
+<Connection Source="Minute" Destination="Reference3.Minute" />
+<Connection Source="Day" Destination="Reference4.day" />
+<Connection Source="Day" Destination="Reference5.day" />
+<Connection Source="Day" Destination="Reference6.day" />
+<Connection Source="Day" Destination="Reference.day" />
+<Connection Source="Day" Destination="Reference1.day" />
+<Connection Source="Day" Destination="Reference2.day" />
+<Connection Source="Day" Destination="Reference3.day" /></DataConnections>
+</FBNetwork>
+</FBType>

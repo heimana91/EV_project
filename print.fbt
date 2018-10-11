@@ -1,0 +1,83 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="print" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="UOA" Version="0.1" Author="hpea485" Date="2018-00-07" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Discharging" Comment="">
+  </Event>
+  <Event Name="Charging" Comment="">
+  </Event>
+  <Event Name="Do_nothing" Comment="">
+  </Event>
+  <Event Name="Last_Tick" Comment="">
+    <With Var="Minute" />
+    <With Var="Price" />
+    <With Var="Power_Demand" />
+    <With Var="ESS_Charging" />
+    <With Var="ESS_Discharging_Power" />
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="Done" Comment="">
+    <With Var="min" />
+    <With Var="Demand" />
+    <With Var="Pgrid" />
+    <With Var="Pbc" />
+    <With Var="Pbd" />
+    <With Var="Price_min" />
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Minute" Type="DINT" Comment="" />
+  <VarDeclaration Name="Price" Type="REAL" Comment="" />
+  <VarDeclaration Name="Power_Demand" Type="REAL" Comment="" />
+  <VarDeclaration Name="ESS_Charging" Type="REAL" Comment="" />
+  <VarDeclaration Name="ESS_Discharging_Power" Type="REAL" Comment="" />
+</InputVars>
+<OutputVars>
+  <VarDeclaration Name="min" Type="DINT" Comment="" />
+  <VarDeclaration Name="Demand" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pgrid" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pbc" Type="REAL" Comment="" />
+  <VarDeclaration Name="Pbd" Type="REAL" Comment="" />
+  <VarDeclaration Name="Price_min" Type="REAL" Comment="" />
+</OutputVars>
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="Init" Comment="" x="437.5" y="175">
+  </ECState>
+  <ECState Name="Do_nothing" Comment="" x="175" y="787.5">
+    <ECAction Algorithm="Algorithm2" Output="Done" />
+  </ECState>
+  <ECState Name="Discharging" Comment="" x="2318.75" y="350">
+    <ECAction Algorithm="do_print" Output="Done" />
+  </ECState>
+  <ECState Name="Charging" Comment="" x="1706.25" y="1225">
+    <ECAction Algorithm="Algorithm1" Output="Done" />
+  </ECState>
+  <ECTransition Source="Do_nothing" Destination="Discharging" Condition="Discharging AND Last_Tick" x="962.5" y="481.25" />
+  <ECTransition Source="Do_nothing" Destination="Charging" Condition="Charging AND Last_Tick" x="831.25" y="962.5" />
+  <ECTransition Source="Do_nothing" Destination="Do_nothing" Condition="Do_nothing AND Last_Tick" x="175" y="1006.25" />
+  <ECTransition Source="Discharging" Destination="Charging" Condition="Charging AND Last_Tick" x="1730.77086114883" y="848" />
+  <ECTransition Source="Discharging" Destination="Do_nothing" Condition="Do_nothing AND Last_Tick" x="1225" y="743.75" />
+  <ECTransition Source="Discharging" Destination="Discharging" Condition="Discharging AND Last_Tick" x="2187.5" y="175" />
+  <ECTransition Source="Charging" Destination="Discharging" Condition="Discharging AND Last_Tick" x="2450" y="918.75" />
+  <ECTransition Source="Charging" Destination="Do_nothing" Condition="Do_nothing AND Last_Tick" x="743.75" y="1137.5" />
+  <ECTransition Source="Charging" Destination="Charging" Condition="Charging AND Last_Tick" x="1400" y="1443.75" />
+  <ECTransition Source="Init" Destination="Do_nothing" Condition="Do_nothing AND Last_Tick" x="175" y="306.25" />
+  <ECTransition Source="Init" Destination="Discharging" Condition="Discharging AND Last_Tick" x="1050" y="175" />
+  <ECTransition Source="Init" Destination="Charging" Condition="Charging AND Last_Tick" x="700" y="393.75" />
+</ECC><Algorithm Name="do_print" Comment="">
+  <Other Language="C" Prototype="" Text="REAL ESS = me-&gt;ESS_Discharging_Power;&#xD;&#xA;REAL Pg = me-&gt;Power_Demand - ESS;&#xD;&#xA;REAL Power_Demand = me-&gt;Power_Demand;&#xD;&#xA;REAL the_price = me-&gt;Price;&#xD;&#xA;DINT minute = me-&gt;Minute;&#xD;&#xA;printf(&quot;Minute in soc do_print %d \r\n&quot;, minute);&#xD;&#xA;printf(&quot;the price do_print %f \r\n&quot;, the_price);&#xD;&#xA;//if (Power_Demand == ESS){&#xD;&#xA;//the_price = 0;&#xD;&#xA;//}&#xD;&#xA;//else if(Power_Demand == Pg){&#xD;&#xA;//the_price = Pg * me-&gt;Price;&#xD;&#xA;//}&#xD;&#xA;me-&gt;min = minute;&#xD;&#xA;me-&gt;Demand = Power_Demand;&#xD;&#xA;me-&gt;Pgrid= Pg;&#xD;&#xA;me-&gt;Pbc = 0;&#xD;&#xA;me-&gt;Pbd = ESS;&#xD;&#xA;me-&gt;Price_min = the_price / (30* 2* 1000);// converting $/Mwh to $/kwmin&#xD;&#xA;&#xD;&#xA;printf(&quot;--------OUTPUT DISCHARGING STATE ------  \r\n&quot;);&#xD;&#xA;//printf(&quot;DONE \r\n&quot;);&#xD;&#xA;printf(&quot;Current Minute: %d\tCurrent Price:%f\r\n&quot;, me-&gt;Minute, the_price);" />
+</Algorithm>
+<Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="REAL the_price = me-&gt;Price;&#xD;&#xA;REAL ESS = 200;&#xD;&#xA;REAL Pg = me-&gt;Power_Demand + ESS;&#xD;&#xA;REAL Power_Demand = me-&gt;Power_Demand;&#xD;&#xA;DINT minute = me-&gt;Minute;&#xD;&#xA;&#xD;&#xA;me-&gt;min = minute;&#xD;&#xA;me-&gt;Demand = Power_Demand;&#xD;&#xA;me-&gt;Pgrid= Pg;&#xD;&#xA;me-&gt;Pbc = ESS;&#xD;&#xA;me-&gt;Pbd = 0;&#xD;&#xA;me-&gt;Price_min = the_price / (30* 2* 1000);// converting $/Mwh to $/kwmin&#xD;&#xA;printf(&quot;Minute in soc al1 %d \r\n&quot;, minute);&#xD;&#xA;&#xD;&#xA;&#xD;&#xA;printf(&quot;-------- OUTPUT CHARGING STATE ----- \r\n&quot;);&#xD;&#xA;printf(&quot;DONE \r\n&quot;);&#xD;&#xA;&#xD;&#xA;//printf(&quot;Current Minute: %d\t Current Price:%f\r\n&quot;, me-&gt;Minute, me-&gt;Price);&#xD;&#xA;&#xD;&#xA;//the_price = (Pg + ESS) * me-&gt;Price/(2*1000);//price / half kwh *1000&#xD;&#xA;//printf(&quot; Grid POWER: %f \t ESS Power:%f \r\n&quot;, Pg, ESS);&#xD;&#xA;printf(&quot;Power demand: %f\t Current Price:%f\r\n&quot;, me-&gt;Power_Demand, the_price);" />
+</Algorithm>
+<Algorithm Name="Algorithm2" Comment="">
+  <Other Language="C" Prototype="" Text="REAL the_price = me-&gt;Price;&#xD;&#xA;REAL ESS = 200;&#xD;&#xA;REAL Pg = me-&gt;Power_Demand + ESS;&#xD;&#xA;REAL Power_Demand = me-&gt;Power_Demand;&#xD;&#xA;DINT minute = me-&gt;Minute;&#xD;&#xA;printf(&quot;Minute in soc al2 %d \r\n&quot;, minute);&#xD;&#xA;&#xD;&#xA;me-&gt;min = minute;&#xD;&#xA;me-&gt;Demand = Power_Demand;&#xD;&#xA;me-&gt;Pgrid= Power_Demand;&#xD;&#xA;me-&gt;Pbc = 0;&#xD;&#xA;me-&gt;Pbd = 0;&#xD;&#xA;me-&gt;Price_min = the_price / (30* 2* 1000);// converting $/Mwh to $/kwmin&#xD;&#xA;&#xD;&#xA;printf(&quot;----------NO CHARGE__NO DISCHARGE--------------- \r\n&quot;);&#xD;&#xA;printf(&quot;DONE \r\n&quot;);&#xD;&#xA;printf(&quot;Power Demand : %f\t Current Price:%f\r\n&quot;, Power_Demand, the_price);" />
+</Algorithm></BasicFB>
+</FBType>

@@ -1,0 +1,64 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="cfb_controller" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="UOA" Version="0.1" Author="hpea485" Date="2018-00-07" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick" Comment="">
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="Charging" Comment="">
+  </Event>
+  <Event Name="Discharging" Comment="">
+  </Event>
+  <Event Name="Do_nothing" Comment="">
+  </Event>
+  <Event Name="Tick_time" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Minute" Type="DINT" Comment="" />
+  <VarDeclaration Name="Price" Type="REAL" Comment="" />
+  <VarDeclaration Name="Demand_kWh" Type="REAL" Comment="" />
+  <VarDeclaration Name="ESS_battery_SoC" Type="REAL" Comment="" />
+  <VarDeclaration Name="day" Type="REAL" Comment="" />
+  <VarDeclaration Name="Sma" Type="REAL" Comment="" />
+  <VarDeclaration Name="Std_dev" Type="REAL" Comment="" />
+</InputVars>
+<OutputVars>
+  <VarDeclaration Name="ESS_Charging_Power_Demand" Type="REAL" Comment="" />
+  <VarDeclaration Name="ESS_Discharging_Power" Type="REAL" Comment="" />
+  <VarDeclaration Name="SoC" Type="REAL" Comment="" />
+  <VarDeclaration Name="Demand" Type="REAL" Comment="" />
+</OutputVars>
+</InterfaceList>
+<FBNetwork>
+  <FB Name="bfb_controller_um" Type="bfb_controller_um" x="2800" y="393.75" />
+  <FB Name="Reference" Type="bfb_off_peak_types" x="1531.25" y="700" />
+  <EventConnections><Connection Source="Tick" Destination="bfb_controller_um.tick" />
+<Connection Source="Tick" Destination="Reference.tick" />
+<Connection Source="bfb_controller_um.Charging" Destination="Charging" />
+<Connection Source="bfb_controller_um.Discharging" Destination="Discharging" />
+<Connection Source="bfb_controller_um.Do_nothing" Destination="Do_nothing" />
+<Connection Source="bfb_controller_um.Tick_time" Destination="Tick_time" />
+<Connection Source="Reference.Off_peak" Destination="bfb_controller_um.OffPeak" />
+<Connection Source="Reference.Off_peak_charging" Destination="bfb_controller_um.OffPeakCharge" />
+<Connection Source="Reference.Tick" Destination="bfb_controller_um.Tick_controller" />
+<Connection Source="Reference.Peak" Destination="bfb_controller_um.Peak" /></EventConnections>
+  <DataConnections><Connection Source="Minute" Destination="bfb_controller_um.minute" />
+<Connection Source="Price" Destination="Reference.price" />
+<Connection Source="Demand_kWh" Destination="bfb_controller_um.Power_Demand" />
+<Connection Source="ESS_battery_SoC" Destination="bfb_controller_um.SoC" />
+<Connection Source="day" Destination="bfb_controller_um.day" />
+<Connection Source="Sma" Destination="Reference.Sma" />
+<Connection Source="Std_dev" Destination="Reference.std_dev" />
+<Connection Source="bfb_controller_um.Power_Charging" Destination="ESS_Charging_Power_Demand" />
+<Connection Source="bfb_controller_um.Power_Discharging" Destination="ESS_Discharging_Power" />
+<Connection Source="bfb_controller_um.SoC_out" Destination="SoC" />
+<Connection Source="bfb_controller_um.Demand" Destination="Demand" /></DataConnections>
+</FBNetwork>
+</FBType>

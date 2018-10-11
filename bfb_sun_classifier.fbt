@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_sun_classifier" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="UOA" Version="0.1" Author="hpea485" Date="2018-00-07" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick" Comment="">
+    <With Var="Minute" />
+    <With Var="day" />
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="EnterOffPeak" Comment="">
+  </Event>
+  <Event Name="EnterOnPeak" Comment="">
+  </Event>
+  <Event Name="Tick_time" Comment="">
+  </Event>
+  <Event Name="OffPeakCharging" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Minute" Type="DINT" Comment="" />
+  <VarDeclaration Name="day" Type="REAL" Comment="" />
+</InputVars>
+
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="State1" Comment="" x="678.125" y="554.166680574417">
+  </ECState>
+  <ECState Name="EnterOffPeak" Comment="" x="1356.25" y="350">
+    <ECAction Algorithm="Algorithm1" Output="EnterOffPeak" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECState Name="EnterOnPeak" Comment="" x="1706.25" y="1662.5">
+    <ECAction Algorithm="Algorithm2" Output="EnterOnPeak" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECState Name="OffpeakCharging" Comment="" x="4243.75" y="1268.75">
+    <ECAction Algorithm="Algorithm3" Output="OffPeakCharging" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECTransition Source="EnterOffPeak" Destination="EnterOffPeak" Condition="Tick AND ((day=6) AND(Minute &lt; 1230 AND Minute &gt;1049) OR (Minute &lt; 151 )OR( Minute &gt;1410) )" x="1825.31272172928" y="175" />
+  <ECTransition Source="EnterOffPeak" Destination="EnterOnPeak" Condition="Tick AND ((day=6) AND(Minute &gt; 1229 AND Minute &lt; 1411))" x="218.75" y="787.5" />
+  <ECTransition Source="EnterOffPeak" Destination="OffpeakCharging" Condition="Tick AND ((day=6) AND(Minute &lt;1050 AND Minute &gt;150) )" x="2712.5" y="743.75" />
+  <ECTransition Source="EnterOnPeak" Destination="EnterOffPeak" Condition="Tick AND ((day=6) AND(Minute &lt; 1230 AND Minute &gt;1049) OR (Minute &lt; 151 )OR( Minute &gt;1410) )" x="775.312721729279" y="962.5" />
+  <ECTransition Source="EnterOnPeak" Destination="EnterOnPeak" Condition="Tick AND ((day=6) AND(Minute &gt; 1229 AND Minute &lt; 1411))" x="1050" y="1925" />
+  <ECTransition Source="EnterOnPeak" Destination="OffpeakCharging" Condition="Tick AND ((day=6) AND(Minute &lt;1050 AND Minute &gt;150) )" x="1881.25" y="1225" />
+  <ECTransition Source="OffpeakCharging" Destination="EnterOnPeak" Condition="Tick AND ((day=6) AND(Minute &gt; 1229 AND Minute &lt; 1411))" x="2450" y="1487.5" />
+  <ECTransition Source="OffpeakCharging" Destination="OffpeakCharging" Condition="Tick AND ((day=6) AND(Minute &lt;1050 AND Minute &gt;150) )" x="4156.25" y="1793.75" />
+  <ECTransition Source="OffpeakCharging" Destination="EnterOffPeak" Condition="Tick AND ((day=6) AND(Minute &lt; 1230 AND Minute &gt;1049) OR (Minute &lt; 151 )OR( Minute &gt;1410) )" x="2887.5" y="393.75" />
+  <ECTransition Source="State1" Destination="EnterOffPeak" Condition="day = 6" x="998.1875" y="438.083340287209" />
+</ECC><Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot;Entered OFF PEAK.....\r\n&quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm2" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot; Entered On peak .....\r\n &quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm3" Comment="">
+  <Other Language="C" Prototype="" Text="printf(&quot; OffPeak Charging \r\n &quot;);" />
+</Algorithm></BasicFB>
+</FBType>

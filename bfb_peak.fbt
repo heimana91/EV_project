@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_peak" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="DESKTOP-TGOEKBD" Version="0.1" Author="palme" Date="2018-00-09" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick" Comment="">
+  </Event>
+  <Event Name="Peak" Comment="">
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="Peak_ESS_discharging" Comment="">
+  </Event>
+</EventOutputs>
+
+
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="Start" Comment="" x="700" y="175">
+  </ECState>
+  <ECState Name="ESS_discharging" Comment="" x="1531.25" y="175">
+    <ECAction Output="Peak_ESS_discharging" />
+  </ECState>
+  <ECTransition Source="Start" Destination="ESS_discharging" Condition="Tick AND Peak" x="1050" y="262.5" />
+  <ECTransition Source="Start" Destination="Start" Condition="true" x="656.25" y="393.75" />
+</ECC></BasicFB>
+</FBType>

@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_ess_battery" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="UOA" Version="0.1" Author="hpea485" Date="2018-00-07" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Discharge" Comment="">
+  </Event>
+  <Event Name="Charge" Comment="">
+  </Event>
+  <Event Name="Do_nothing" Comment="">
+  </Event>
+  <Event Name="Tick_ESS" Comment="">
+    <With Var="Discharge_Power" />
+    <With Var="Charge_Power" />
+    <With Var="SoC_input" />
+    <With Var="Power_Demand" />
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="SoC_change" Comment="">
+    <With Var="BatterySoC" />
+    <With Var="Demand" />
+  </Event>
+  <Event Name="Discharge_out" Comment="">
+  </Event>
+  <Event Name="Charge_out" Comment="">
+  </Event>
+  <Event Name="Do_nothing_out" Comment="">
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Discharge_Power" Type="REAL" Comment="" />
+  <VarDeclaration Name="Charge_Power" Type="REAL" InitialValue="1" Comment="" />
+  <VarDeclaration Name="SoC_input" Type="REAL" Comment="" />
+  <VarDeclaration Name="Power_Demand" Type="REAL" Comment="" />
+</InputVars>
+<OutputVars>
+  <VarDeclaration Name="BatterySoC" Type="REAL" Comment="" />
+  <VarDeclaration Name="Demand" Type="REAL" Comment="" />
+</OutputVars>
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="Init" Comment="" x="787.5" y="1137.5">
+  </ECState>
+  <ECState Name="Do_nothing" Comment="" x="489.25" y="496.5">
+    <ECAction Algorithm="Algorithm2" Output="SoC_change" />
+    <ECAction Output="Do_nothing_out" />
+  </ECState>
+  <ECState Name="Discharging" Comment="" x="1883.5" y="530">
+    <ECAction Algorithm="bat_model_algo" Output="SoC_change" />
+    <ECAction Output="Discharge_out" />
+  </ECState>
+  <ECState Name="CHARGING" Comment="" x="1828.25" y="1201">
+    <ECAction Algorithm="Algorithm1" Output="SoC_change" />
+    <ECAction Output="Charge_out" />
+  </ECState>
+  <ECTransition Source="Do_nothing" Destination="Discharging" Condition="Discharge AND Tick_ESS" x="1356.25" y="393.75" />
+  <ECTransition Source="Do_nothing" Destination="CHARGING" Condition="Charge AND Tick_ESS" x="1136.78436800837" y="700" />
+  <ECTransition Source="Do_nothing" Destination="Do_nothing" Condition="Do_nothing AND Tick_ESS" x="175" y="306.25" />
+  <ECTransition Source="Discharging" Destination="CHARGING" Condition="Charge AND Tick_ESS" x="2187.5" y="787.5" />
+  <ECTransition Source="Discharging" Destination="Do_nothing" Condition="Do_nothing AND Tick_ESS" x="1006.25" y="525" />
+  <ECTransition Source="Discharging" Destination="Discharging" Condition="Discharge AND Tick_ESS" x="2450" y="481.25" />
+  <ECTransition Source="CHARGING" Destination="Discharging" Condition="Discharge AND Tick_ESS" x="1604.41589877009" y="831.25" />
+  <ECTransition Source="CHARGING" Destination="Do_nothing" Condition="Do_nothing AND Tick_ESS" x="1006.25" y="1006.25" />
+  <ECTransition Source="CHARGING" Destination="CHARGING" Condition="Charge AND Tick_ESS" x="1662.5" y="1400" />
+  <ECTransition Source="Init" Destination="Do_nothing" Condition="Do_nothing AND Tick_ESS" x="393.75" y="787.5" />
+  <ECTransition Source="Init" Destination="CHARGING" Condition="Charge AND Tick_ESS" x="1093.75" y="1225" />
+  <ECTransition Source="Init" Destination="Discharging" Condition="Discharge AND Tick_ESS" x="1165.97595736384" y="831.25" />
+</ECC><Algorithm Name="bat_model_algo" Comment="">
+  <Other Language="C" Prototype="" Text="REAL SoC = me-&gt;SoC_input;&#xD;&#xA;REAL discharge = me-&gt;Discharge_Power;&#xD;&#xA;REAL cb = 620;// kwh from Kalpesh code, power required by ESS to charge 100% in 1 hour i.e 1C rate&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;&#xD;&#xA;me-&gt;BatterySoC = SoC - (discharge*100/(cb*60));&#xD;&#xA;SoC = SoC - (discharge*100/(cb*60));&#xD;&#xA;printf(&quot;SoC_discharge : %f  \r\n&quot;,me-&gt;BatterySoC);&#xD;&#xA;&#xD;&#xA;//Have better modelling&#xD;&#xA;//current_SoC += me-&gt;Minutes_per_tick * me-&gt;Current_A; //WRONG: Fix &#xD;&#xA;&#xD;&#xA;//#define MAX_SOC 100&#xD;&#xA;//#define MIN_SOC 0&#xD;&#xA;&#xD;&#xA;//if(current_SoC &gt; MAX_SOC) {&#xD;&#xA;	//current_SoC = MAX_SOC;&#xD;&#xA;//} else if (current_SoC &lt; MIN_SOC) {&#xD;&#xA;	//current_SoC = MIN_SOC;&#xD;&#xA;//}&#xD;&#xA;&#xD;&#xA;//me-&gt;Current_SoC = current_SoC;" />
+</Algorithm>
+<Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="REAL SoC = me-&gt;SoC_input;&#xD;&#xA;REAL charge = me-&gt;Charge_Power;&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;&#xD;&#xA;REAL cb = 620;// kwh from Kalpesh code, power required by ESS to charge 100% in 1 hour i.e 1C rate&#xD;&#xA;me-&gt;BatterySoC = SoC + charge*100/(cb*60);&#xD;&#xA;SoC = SoC + charge*100/(cb*60);&#xD;&#xA;printf(&quot;SoC_charge : %f  \r\n&quot;,me-&gt;BatterySoC);&#xD;&#xA;" />
+</Algorithm>
+<Algorithm Name="Algorithm2" Comment="">
+  <Other Language="C" Prototype="" Text="//static REAL SoC = 0;&#xD;&#xA;printf(&quot;welcome to soc initial \r\n&quot;);&#xD;&#xA;me-&gt;BatterySoC = me-&gt;SoC_input;&#xD;&#xA;&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;printf(&quot;power : %f, %f \r\n&quot;, Demand, me-&gt;Power_Demand);&#xD;&#xA;" />
+</Algorithm></BasicFB>
+</FBType>

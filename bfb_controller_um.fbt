@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE FBType SYSTEM "http://www.holobloc.com/xml/LibraryElement.dtd" >
+<FBType Name="bfb_controller_um" Comment="" >
+<Identification Standard="61499-2" />
+<VersionInfo Organization="DESKTOP-TGOEKBD" Version="0.1" Author="palme" Date="2018-00-09" />
+<CompilerInfo header="" classdef="">
+</CompilerInfo>
+<InterfaceList>
+<EventInputs>
+  <Event Name="Tick_controller" Comment="">
+    <With Var="SoC" />
+    <With Var="day" />
+  </Event>
+  <Event Name="OffPeakCharge" Comment="">
+  </Event>
+  <Event Name="OffPeak" Comment="">
+  </Event>
+  <Event Name="Peak" Comment="">
+  </Event>
+  <Event Name="tick" Comment="">
+    <With Var="Power_Demand" />
+    <With Var="minute" />
+  </Event>
+  <Event Name="Grey_area" Comment="">
+  </Event>
+</EventInputs>
+<EventOutputs>
+  <Event Name="Discharging" Comment="">
+  </Event>
+  <Event Name="Charging" Comment="">
+  </Event>
+  <Event Name="Do_nothing" Comment="">
+  </Event>
+  <Event Name="Tick_time" Comment="">
+    <With Var="Power_Discharging" />
+    <With Var="Power_Charging" />
+    <With Var="SoC_out" />
+    <With Var="Demand" />
+  </Event>
+</EventOutputs>
+<InputVars>
+  <VarDeclaration Name="Power_Demand" Type="REAL" Comment="" />
+  <VarDeclaration Name="SoC" Type="REAL" Comment="" />
+  <VarDeclaration Name="day" Type="REAL" Comment="" />
+  <VarDeclaration Name="minute" Type="DINT" Comment="" />
+</InputVars>
+<OutputVars>
+  <VarDeclaration Name="Power_Discharging" Type="REAL" Comment="" />
+  <VarDeclaration Name="Power_Charging" Type="REAL" Comment="" />
+  <VarDeclaration Name="SoC_out" Type="REAL" Comment="" />
+  <VarDeclaration Name="Demand" Type="REAL" Comment="" />
+</OutputVars>
+</InterfaceList>
+<BasicFB><ECC>
+  <ECState Name="init" Comment="" x="262.5" y="1531.25">
+  </ECState>
+  <ECState Name="Do_nothing" Comment="" x="344.080088973045" y="451.922686576843">
+    <ECAction Algorithm="Algorithm4" Output="Do_nothing" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECState Name="charging" Comment="" x="3152.5" y="499.25">
+    <ECAction Algorithm="Algorithm1" Output="Charging" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECState Name="Peak" Comment="" x="3293.25" y="1787.25">
+    <ECAction Algorithm="Algorithm2" Output="Discharging" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECState Name="offPeak" Comment="" x="1443.75" y="1662.5">
+    <ECAction Algorithm="Algorithm3" Output="Discharging" />
+    <ECAction Output="Tick_time" />
+  </ECState>
+  <ECTransition Source="Do_nothing" Destination="charging" Condition="Tick_controller AND OffPeakCharge AND (SoC &lt; 95)" x="1706.25" y="393.75" />
+  <ECTransition Source="Do_nothing" Destination="Peak" Condition="Tick_controller AND Peak AND (SoC &gt; 25)" x="2143.75" y="1137.5" />
+  <ECTransition Source="Do_nothing" Destination="offPeak" Condition="Tick_controller AND OffPeak AND (SoC &gt; 25)" x="878.407313674688" y="787.5" />
+  <ECTransition Source="Do_nothing" Destination="Do_nothing" Condition="Tick_controller AND ((SoC &lt; 25 AND(Peak OR OffPeak))OR(SoC &gt; 95 AND OffPeakCharge)OR Grey_area)" x="175" y="700" />
+  <ECTransition Source="charging" Destination="Do_nothing" Condition="Tick_controller AND ((SoC &lt; 25 AND (Peak OR OffPeak) ) OR (SoC &gt; 95 AND OffPeakCharge))" x="743.75" y="175" />
+  <ECTransition Source="charging" Destination="Peak" Condition="Tick_controller AND Peak AND (SoC &gt; 25)" x="3762.5" y="1050" />
+  <ECTransition Source="charging" Destination="offPeak" Condition="Tick_controller AND OffPeak AND (SoC &gt; 25)" x="1925" y="1356.25" />
+  <ECTransition Source="charging" Destination="charging" Condition="Tick_controller AND OffPeakCharge AND (SoC &lt; 95)" x="2887.5" y="175" />
+  <ECTransition Source="Peak" Destination="offPeak" Condition="Tick_controller AND OffPeak AND (SoC &gt; 25)" x="2187.5" y="1793.75" />
+  <ECTransition Source="Peak" Destination="charging" Condition="Tick_controller AND OffPeakCharge AND (SoC &lt; 95)" x="3062.5" y="1181.25" />
+  <ECTransition Source="Peak" Destination="Do_nothing" Condition="Tick_controller AND (Grey_area OR(SoC &lt; 25 AND(Peak OR OffPeak))OR(SoC &gt; 95 AND OffPeakCharge))" x="2100" y="831.25" />
+  <ECTransition Source="Peak" Destination="Peak" Condition="Tick_controller AND Peak AND (SoC &gt; 25)" x="3281.25" y="2231.25" />
+  <ECTransition Source="offPeak" Destination="Peak" Condition="Tick_controller AND Peak AND (SoC &gt; 25)" x="2406.25" y="2012.5" />
+  <ECTransition Source="offPeak" Destination="charging" Condition="Tick_controller AND OffPeakCharge AND (SoC &lt; 95)" x="1662.5" y="656.25" />
+  <ECTransition Source="offPeak" Destination="Do_nothing" Condition="Tick_controller AND ((SoC &lt; 25 AND(Peak OR OffPeak))OR(SoC &gt; 95 AND OffPeakCharge)OR Grey_area)" x="-78.3035017549993" y="1006.25" />
+  <ECTransition Source="offPeak" Destination="offPeak" Condition="Tick_controller AND OffPeak AND (SoC &gt; 25)" x="525" y="1925" />
+  <ECTransition Source="init" Destination="Do_nothing" Condition="Tick_controller AND ((SoC &lt; 25 AND(Peak OR OffPeak))OR(SoC &gt; 95 AND OffPeakCharge)OR Grey_area)" x="-603.303501754999" y="918.75" />
+  <ECTransition Source="init" Destination="offPeak" Condition="Tick_controller AND OffPeak" x="656.25" y="1662.5" />
+  <ECTransition Source="init" Destination="charging" Condition="Tick_controller AND OffPeakCharge" x="1356.25" y="1050" />
+  <ECTransition Source="init" Destination="Peak" Condition="Tick_controller AND Peak" x="1356.25" y="1443.75" />
+</ECC><Algorithm Name="Algorithm1" Comment="">
+  <Other Language="C" Prototype="" Text="me-&gt;Power_Charging = 200;&#xD;&#xA;printf(&quot; Controler Charging state  \r\n&quot;);&#xD;&#xA;//me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;//printf(&quot;Power Charging: %f&quot;, me-&gt;Power_Charging);&#xD;&#xA;REAL Day = me-&gt;day;&#xD;&#xA;DINT Minute = me-&gt;minute;&#xD;&#xA;&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;printf(&quot;Minute = %d Demand = %f&quot;,Minute, Demand);&#xD;&#xA;&#xD;&#xA;if (Minute == 0 &amp;&amp; Day == 0){&#xD;&#xA;me-&gt;SoC = 90;&#xD;&#xA;}&#xD;&#xA;else{&#xD;&#xA;me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;}" />
+</Algorithm>
+<Algorithm Name="Algorithm2" Comment="">
+  <Other Language="C" Prototype="" Text="REAL Power_required = me-&gt;Power_Demand;&#xD;&#xA;REAL max_ESS_discharge = 150;&#xD;&#xA;REAL Day = me-&gt;day;&#xD;&#xA;DINT Minute = me-&gt;minute;&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;&#xD;&#xA;printf(&quot;Minute = %d Demand = %f&quot;,Minute, Demand);&#xD;&#xA;if (max_ESS_discharge &gt;  Power_required){&#xD;&#xA;me-&gt;Power_Discharging = Power_required;&#xD;&#xA;} &#xD;&#xA;else {&#xD;&#xA;me-&gt;Power_Discharging = max_ESS_discharge;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;if (Minute == 0 &amp;&amp; Day == 0){&#xD;&#xA;me-&gt;SoC = 90;&#xD;&#xA;}&#xD;&#xA;else{&#xD;&#xA;me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;}&#xD;&#xA;//me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;printf(&quot; Disharging.... state..Controller \r\n &quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm3" Comment="">
+  <Other Language="C" Prototype="" Text="REAL Power_required = me-&gt;Power_Demand;&#xD;&#xA;REAL Peak = 130;&#xD;&#xA;REAL max_ESS_discharge = 150;&#xD;&#xA;REAL Day = me-&gt;day;&#xD;&#xA;DINT Minute = me-&gt;minute;&#xD;&#xA;&#xD;&#xA;printf(&quot;Minute1 = %d Demand1 = %f \r\n&quot;,Minute, Power_required);&#xD;&#xA;&#xD;&#xA;if (Peak &lt; Power_required){&#xD;&#xA;	if (max_ESS_discharge &gt; Power_required-Peak){&#xD;&#xA;	me-&gt;Power_Discharging = Power_required - Peak;&#xD;&#xA;	}&#xD;&#xA;	else{&#xD;&#xA;	me-&gt;Power_Discharging = max_ESS_discharge;&#xD;&#xA;	}&#xD;&#xA;}&#xD;&#xA;else{&#xD;&#xA;me-&gt;Power_Discharging = 0;&#xD;&#xA;}&#xD;&#xA;me-&gt;Demand = Power_required;&#xD;&#xA;if (Minute == 0 &amp;&amp; Day == 0){&#xD;&#xA;me-&gt;SoC = 90;&#xD;&#xA;}&#xD;&#xA;else{&#xD;&#xA;me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;}&#xD;&#xA;&#xD;&#xA;//me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;printf(&quot; Discharging.... state, OFFpeak controller \r\n &quot;);" />
+</Algorithm>
+<Algorithm Name="Algorithm4" Comment="">
+  <Other Language="C" Prototype="" Text="REAL Day = me-&gt;day;&#xD;&#xA;DINT Minute = me-&gt;minute;&#xD;&#xA;printf(&quot;Do Nothing, controller \r\n&quot;);&#xD;&#xA;REAL Demand = me-&gt;Power_Demand;&#xD;&#xA;me-&gt;Demand = Demand;&#xD;&#xA;printf(&quot;Minute = %d Demand = %f&quot;,Minute, Demand);&#xD;&#xA;if (Minute == 0 &amp;&amp; Day == 0){&#xD;&#xA;//me-&gt;SoC = 0;&#xD;&#xA;me-&gt;SoC_out = 90;&#xD;&#xA;}&#xD;&#xA;else{&#xD;&#xA;me-&gt;SoC_out = me-&gt;SoC;&#xD;&#xA;}&#xD;&#xA;" />
+</Algorithm></BasicFB>
+</FBType>
